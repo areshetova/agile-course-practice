@@ -157,6 +157,8 @@ include "code/vectors3d/ViewModel"
 project(":code/vectors3d/ViewModel").name = "vectors3d-ViewModel"
 include "code/vectors3d/View"
 project(":code/vectors3d/View").name = "vectors3d-View"
+include "code/vectors3d/Infrastructure"
+project(":code/vectors3d/Infrastructure").name = "vectors3d-Infrastructure"
 
 
 // Semerenko Alexander 

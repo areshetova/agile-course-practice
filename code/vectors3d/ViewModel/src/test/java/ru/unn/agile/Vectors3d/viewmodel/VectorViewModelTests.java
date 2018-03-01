@@ -5,15 +5,17 @@ import org.junit.Before;
 import org.junit.Test;
 import ru.unn.agile.Vectors3d.Model.Vector3d;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 public class VectorViewModelTests {
 
     @Before
     public void setUp() {
-        viewModel = new VectorViewModel();
+        if (viewModel == null) {
+            viewModel = new VectorViewModel(new FakeLogger());
+        }
     }
 
     @After
@@ -122,6 +124,33 @@ public class VectorViewModelTests {
         assertEquals("0", viewModel.getXProperty().get());
         assertEquals("0", viewModel.getYProperty().get());
         assertEquals("1", viewModel.getZProperty().get());
+    }
+
+    @Test
+    public void canCreateLogger() {
+        FakeLogger logger = new FakeLogger();
+        VectorViewModel viewModel = new VectorViewModel(logger);
+        assertNotNull(viewModel);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void viewModelWithNullLogger() {
+        new VectorViewModel(null);
+    }
+
+    @Test
+    public void logIsEmptyFirstly() {
+        List<String> log = viewModel.getLog();
+        assertTrue(log.isEmpty());
+    }
+
+    @Test
+    public void logContainsMessageAfterNormalization() {
+        viewModel.setCoordinates("1.0", "2.0", "3.0");
+        viewModel.normalize();
+        String message = viewModel.getLog().get(0);
+        assertTrue(message.matches(".*"
+                + VectorViewModel.LogMessages.NORMALIZE_WAS_PRESSED + ".*"));
     }
 
     private VectorViewModel viewModel;

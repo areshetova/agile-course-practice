@@ -19,7 +19,18 @@ public class VectorViewModel {
         x.set("0.0");
         y.set("0.0");
         z.set("0.0");
+        init();
+    }
 
+    public VectorViewModel(final ILogger logger) {
+        x.set("0.0");
+        y.set("0.0");
+        z.set("0.0");
+        setLogger(logger);
+        init();
+    }
+
+    private void init() {
         final List<StringProperty> fields = new ArrayList<StringProperty>() { {
             add(x);
             add(y);
@@ -88,8 +99,58 @@ public class VectorViewModel {
     }
 
     public void normalize() {
+        logger.log(normalizeLogMessage());
+        updateLogs();
         Vector3d normalizedVector = getVector3d().normalize();
         setVector3d(normalizedVector);
+    }
+
+    public void onFocusChanged(final Boolean oldValue, final Boolean newValue) {
+        if (!oldValue && newValue) {
+            return;
+        }
+        for (ValueChangeListener listener : valueChangedListeners) {
+            if (listener.isChanged()) {
+                String message = LogMessages.EDITING_FINISHED + "Input arguments are: ["
+                        + x.get() + "; " + y.get() + "; " + z.get();
+                logger.log(message);
+                updateLogs();
+
+                listener.cache();
+                break;
+            }
+        }
+    }
+
+    public final void setLogger(final ILogger logger) {
+        if (logger == null) {
+            throw new IllegalArgumentException("Logger parameter can't be null");
+        }
+        this.logger = logger;
+    }
+
+    public final class LogMessages {
+        public static final String EDITING_FINISHED = "Updated input. ";
+        public static final String NORMALIZE_WAS_PRESSED = "Normalization. ";
+
+        private LogMessages() { }
+    }
+
+    private void updateLogs() {
+        List<String> logString = logger.getLog();
+        String newLog = new String("");
+        for (String log : logString) {
+            newLog += log + "\n";
+        }
+        logs.set(newLog);
+    }
+
+    public List<String> getLog() {
+        return logger.getLog();
+    }
+
+    private String normalizeLogMessage() {
+        return LogMessages.NORMALIZE_WAS_PRESSED;
     }
 
     private class ValueChangeListener implements ChangeListener<String> {
@@ -105,6 +166,15 @@ public class VectorViewModel {
                 isNormalizeDisabled.set(true);
             }
         }
+        public boolean isChanged() {
+            return !oldInput.equals(newInput);
+        }
+        public void cache() {
+            oldInput = newInput;
+        }
+
+        private String oldInput = new String("");
+        private String newInput = new String("");
     }
 
     private String formatCoordinate(final double coordinate) {
@@ -139,6 +209,8 @@ public class VectorViewModel {
     private final StringProperty z = new SimpleStringProperty();
 
     private final List<ValueChangeListener> valueChangedListeners = new ArrayList<>();
+    private ILogger logger;
+    private final StringProperty logs = new SimpleStringProperty();
 
     private final BooleanProperty isNormalizeDisabled = new SimpleBooleanProperty();
 }

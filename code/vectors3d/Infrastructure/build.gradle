@@ -1,0 +1,4 @@
+dependencies {
+    compile project(':vectors3d-ViewModel')
+    testCompile project(':vectors3d-ViewModel').sourceSets.test.output
+}

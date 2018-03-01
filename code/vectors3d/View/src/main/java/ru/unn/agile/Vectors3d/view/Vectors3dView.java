@@ -2,6 +2,7 @@ package ru.unn.agile.Vectors3d.view;
 
 import java.io.IOException;
 
+//import javafx.beans.value.ChangeListener;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.control.Accordion;
@@ -10,12 +11,13 @@ import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 
 import ru.unn.agile.Vectors3d.viewmodel.Vectors3dViewModel;
+import ru.unn.agile.Vectors3d.infrastructure.TxtLogger;
 
 public class Vectors3dView {
 
     @FXML
     void initialize() {
-
+        viewModel.setLogger(new TxtLogger("./TxtLogger.log"));
         firstVectorController.setViewModel(viewModel.getFirstVectorViewModel());
         secondVectorController.setViewModel(viewModel.getSecondVectorViewModel());
 

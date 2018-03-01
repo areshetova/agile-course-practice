@@ -7,6 +7,7 @@ public class ResultNumberViewModel {
 
     public ResultNumberViewModel() {
         result.set("");
+
     }
 
     public StringProperty resultProperty() {

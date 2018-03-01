@@ -4,6 +4,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import ru.unn.agile.Vectors3d.Model.Vector3d;
+//import ru.unn.agile.Vectors3d.viewmodel.FakeLogger;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,9 +12,14 @@ import static org.junit.Assert.assertTrue;
 
 public class Vectors3dViewModelTests {
 
+    public void setViewModel(final Vectors3dViewModel viewModel) {
+        this.viewModel = viewModel;
+    }
+
     @Before
     public void setUp() {
-        viewModel = new Vectors3dViewModel();
+        FakeLogger fakeLog = new FakeLogger();
+        viewModel = new Vectors3dViewModel(fakeLog);
     }
 
     @After
@@ -131,6 +137,34 @@ public class Vectors3dViewModelTests {
         assertTrue(viewModel.getResultVectorViewModel().getVector3d().equalCompletely(
                 new Vector3d(-3, 6, -3)
         ));
+    }
+
+    @Test
+    public void logContainsMessageAfterDotProduct() {
+        VectorViewModel firstVector = viewModel.getFirstVectorViewModel();
+        firstVector.setCoordinates("1.0", "2.0", "3.0");
+
+        VectorViewModel secondVector = viewModel.getSecondVectorViewModel();
+        secondVector.setCoordinates("4.0", "5.0", "6.0");
+
+        viewModel.calculateDotProduct();
+        String message = viewModel.getLog().get(0);
+        assertTrue(message.matches(".*"
+                + Vectors3dViewModel.LogMessages.DOT_PRODUCT_WAS_PRESSED + ".*"));
+    }
+
+    @Test
+    public void logContainsMessageAfterCrossProduct() {
+        VectorViewModel firstVector = viewModel.getFirstVectorViewModel();
+        firstVector.setCoordinates("1.0", "-2.0", "3.0");
+
+        VectorViewModel secondVector = viewModel.getSecondVectorViewModel();
+        secondVector.setCoordinates("-4.0", "5.0", "6.0");
+
+        viewModel.calculateCrossProduct();
+        String message = viewModel.getLog().get(0);
+        assertTrue(message.matches(".*"
+                + Vectors3dViewModel.LogMessages.CROSS_PRODUCT_WAS_PRESSED + ".*"));
     }
 
     private Vectors3dViewModel viewModel;

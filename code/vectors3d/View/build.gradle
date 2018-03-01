@@ -2,4 +2,5 @@ apply from:   rootDir.getAbsolutePath() + '/config/scripts/javafx.plugin'
 
 dependencies {
     compile project(':vectors3d-ViewModel')
+    compile project(':vectors3d-Infrastructure')
 }
